@@ -1,22 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/features/screens/login_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit/core/utils/error.dart';
+import 'package:reddit/core/utils/loader.dart';
+import 'package:reddit/features/auth/controller/auth_controller.dart';
+import 'package:reddit/features/auth/screens/login_screen.dart';
+import 'package:reddit/features/home/screens/home_screen.dart';
 import 'package:reddit/theme/pallete.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Reddit',
       debugShowCheckedModeBanner: false,
       theme: Pallete.darkModeAppTheme,
-      home: LoginScreen(),
+      home: ref
+          .watch(currentUserAccountProvider)
+          .when(
+            data: (currentUser) {
+              // `currentUser` is nullable: show HomeScreen when signed in,
+              // otherwise show LoginScreen.
+              if (currentUser != null) {
+                return HomeScreen();
+              }
+              return LoginScreen();
+            },
+            error: (error, st) {
+              // For non-auth related errors, show an ErrorPage.
+              return ErrorPage(error: error.toString());
+            },
+            loading: () => Loader(),
+          ),
+     
     );
   }
 }

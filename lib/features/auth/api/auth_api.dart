@@ -30,6 +30,7 @@ class AuthAPI implements IAuthAPI {
       await _account.createOAuth2Session(provider: OAuthProvider.google);
       //get user account details
       final user = await _account.get();
+
       //return user details
       return Right(user);
     } catch (e, stackTrace) {

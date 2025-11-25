@@ -11,6 +11,7 @@ class LoginButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(authControllerProvider);
+    
     return isLoading
         ? Loader()
         : ElevatedButton.icon(

@@ -19,15 +19,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         .when(
           data: (currentUser) {
             if (currentUser == null) {
-              return const ErrorPage(error: 'User not found');
+              return const Scaffold(
+                body: Center(
+                  child: Text('User not found. Please try logging in again.'),
+                ),
+              );
             }
             return Scaffold(
-              appBar: AppBar(title: const Text('Home')),
-              body: Center(child: Text('Welcome, ${currentUser.name}!')),
+              appBar: AppBar(
+                title: const Text('Home'),
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      // Add logout functionality here if needed
+                    },
+                    icon: const Icon(Icons.logout),
+                  ),
+                ],
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(currentUser.profilePicture),
+                      radius: 50,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Welcome, ${currentUser.name}!',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Email: ${currentUser.email}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Karma: ${currentUser.karma}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
             );
           },
-          error: (err, st) => ErrorText(error: err.toString()),
-          loading: () => Loader(),
+          error: (err, st) {
+            print('Error in HomeScreen: $err');
+            return Scaffold(body: ErrorText(error: err.toString()));
+          },
+          loading: () {
+            print('Loading user data in HomeScreen...');
+            return const Scaffold(body: Loader());
+          },
         );
   }
 }

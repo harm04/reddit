@@ -20,3 +20,8 @@ final appwriteAccountProvider = Provider((ref) {
 final appwriteDatabaseProvider = Provider((ref) {
   return TablesDB(ref.watch(appwriteClientProvider));
 });
+// Appwrite Realtime Provider
+final appwriteRealtimeProvider = Provider((ref) {
+  return Realtime(ref.watch(appwriteClientProvider));
+});
+

@@ -11,12 +11,14 @@ class LoginButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(authControllerProvider);
-    
+
     return isLoading
         ? Loader()
         : ElevatedButton.icon(
             onPressed: () {
-              ref.read(authControllerProvider.notifier).login(context: context);
+              ref.read(authControllerProvider.notifier).login(context);
+              ref.invalidate(currentUserAccountProvider);
+              ref.invalidate(currentUserProvider);
             },
             label: Text('Continue with Google'),
             icon: Image.asset(Constants.googlePath, width: 40),

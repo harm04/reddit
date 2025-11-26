@@ -37,6 +37,7 @@ dependencies:
   appwrite: ^20.3.2
   flutter_riverpod: ^3.0.3
   fpdart: ^1.2.0
+  routemaster: ^1.0.1
 
 dev_dependencies:
   flutter_test:

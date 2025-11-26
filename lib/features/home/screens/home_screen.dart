@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:reddit/core/constants/constants.dart';
 import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
+import 'package:reddit/theme/pallete.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -27,15 +30,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             }
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Home'),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(Constants.logoPath, height: 30),
+                    const SizedBox(width: 8),
+                    const Text('Reddit'),
+                  ],
+                ),
                 actions: [
-                  IconButton(
-                    onPressed: () {
-                      // Add logout functionality here if needed
-                    },
-                    icon: const Icon(Icons.logout),
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(currentUser.profilePicture),
                   ),
+                  SizedBox(width: 18),
                 ],
+              ),
+              drawer: Drawer(
+                elevation: 20,
+                child: Scaffold(
+                  body: SingleChildScrollView(
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18.0,
+                          vertical: 10,
+                        ),
+                        child: Column(
+                          children: [
+                            drawerItem(
+                              iconPath: Constants.discoverPath,
+                              title: 'Discover Communities',
+                            ),
+                            drawerItem(
+                              iconPath: Constants.settingsPath,
+                              title: 'Settings',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
               body: Center(
                 child: Column(
@@ -78,4 +113,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
         );
   }
+}
+
+Widget drawerItem({required String title, required String iconPath}) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 20.0),
+    child: Row(
+      children: [
+        SvgPicture.asset(
+          iconPath,
+          height: 20,
+          colorFilter: ColorFilter.mode(Pallete.whiteColor, BlendMode.srcIn),
+        ),
+        SizedBox(width: 15),
+        Text(title, style: TextStyle(fontSize: 16)),
+      ],
+    ),
+  );
 }

@@ -133,6 +133,8 @@ class AuthController extends StateNotifier<bool> {
   Future<void> _createNewUser(BuildContext context, User r) async {
     //user does not exist, create new user data
     String name = r.email.split('@')[0];
+    //retrive profile picture from email
+    
     final userModel = UserModel(
       name: name,
       email: r.email,

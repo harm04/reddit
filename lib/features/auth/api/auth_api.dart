@@ -16,6 +16,7 @@ final authAPIProvider = Provider((ref) {
 abstract class IAuthAPI {
   FutureEither<User> login();
   Future<User?> currentUser();
+  Future<void> logout();
 }
 
 class AuthAPI implements IAuthAPI {
@@ -44,12 +45,14 @@ class AuthAPI implements IAuthAPI {
     try {
       final user = await _account.get();
       return user;
-    } on AppwriteException catch (_) {
-      // Unauthorized or other Appwrite-specific errors — treat as no user
-      return null;
     } catch (_) {
       // Any other errors — return null so the app can show login UI
       return null;
     }
+  }
+
+  //logout user
+  Future<void> logout() async {
+    await _account.deleteSession(sessionId: 'current');
   }
 }

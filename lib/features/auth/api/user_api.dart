@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:reddit/core/constants/appwrite_constants.dart';
@@ -13,7 +14,7 @@ final userAPIProvider = Provider((ref) {
 
 abstract class IUserAPI {
   FutureEitherVoid saveUserData(UserModel userModel);
-  Future<UserModel?> getUserData(String uid);
+  Future<Row> getUserData(String uid);
 }
 
 class UserAPI implements IUserAPI {
@@ -26,7 +27,7 @@ class UserAPI implements IUserAPI {
       await _db.createRow(
         databaseId: AppwriteConstants.databaseId,
         tableId: AppwriteConstants.userTableId,
-        rowId: userModel.uid, 
+        rowId: userModel.uid,
         data: userModel.toMap(),
       );
       return right(null);
@@ -35,18 +36,13 @@ class UserAPI implements IUserAPI {
     }
   }
 
-  //function to get user data from the database row
+  // function to get user data from the database row
   @override
-  Future<UserModel?> getUserData(String uid) async {
-    try {
-      final row = await _db.getRow(
-        databaseId: AppwriteConstants.databaseId,
-        tableId: AppwriteConstants.userTableId,
-        rowId: uid,
-      );
-      return UserModel.fromMap(row.data);
-    } catch (_) {
-      return null;
-    }
+  Future<Row> getUserData(String uid) async {
+    return _db.getRow(
+      databaseId: AppwriteConstants.databaseId,
+      tableId: AppwriteConstants.userTableId,
+      rowId: uid,
+    );
   }
 }

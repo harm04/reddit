@@ -16,23 +16,49 @@ final authControllerProvider = StateNotifierProvider<AuthController, bool>((
   return AuthController(
     authAPI: ref.watch(authAPIProvider),
     userAPI: ref.watch(userAPIProvider),
+    ref: ref,
   );
 });
 
 //providere for current user
-final currentUserAccountProvider = FutureProvider<User?>((ref) {
+final currentUserAccountProvider = FutureProvider((ref) async {
   final authController = ref.watch(authControllerProvider.notifier);
-  return authController.currentUser();
+  final user = await authController.currentUser();
+  if (user != null) {
+    return user;
+  }
+  return null;
+});
+
+//provider for user details
+final userDetailsProvider = FutureProvider.family((ref, String uid) async {
+  final authController = ref.watch(authControllerProvider.notifier);
+  return authController.getUserData(uid);
+});
+
+//provider for current user details
+final currentUserProvider = FutureProvider((ref) async {
+  final currentUser = await ref.watch(currentUserAccountProvider).value?.$id;
+
+  if (currentUser == null) return null;
+
+  final user = await ref.watch(userDetailsProvider(currentUser).future);
+  return user;
 });
 
 //controller for authentication
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
   final UserAPI _userAPI;
-  AuthController({required AuthAPI authAPI, required UserAPI userAPI})
-    : _authAPI = authAPI,
-      _userAPI = userAPI,
-      super(false);
+  final Ref _ref;
+  AuthController({
+    required AuthAPI authAPI,
+    required UserAPI userAPI,
+    required Ref ref,
+  }) : _authAPI = authAPI,
+       _userAPI = userAPI,
+       _ref = ref,
+       super(false);
 
   void login({required BuildContext context}) async {
     // set authenticated state to true
@@ -47,49 +73,51 @@ class AuthController extends StateNotifier<bool> {
         showSnackbar(context, l.message);
       },
       (r) async {
-        // Fetch user data from database
-        final user = await _userAPI.getUserData(r.$id);
-
-        //if user exists then just login else save user data
-        if (user == null) {
-          print('saving new user data ${r.$id}');
-          //extract user name from email
-          String name = r.email.split('@')[0];
-
-          // store data in user model
-          UserModel userModel = UserModel(
-            name: name,
-            email: r.email,
-            profilePicture: Constants.avatarDefault,
-            bannerPicture: Constants.bannerDefault,
-            uid: r.$id,
-            isAuthenticated: true,
-            karma: 0,
-            awards: [],
+        final existing = await _userAPI.getUserData(r.$id);
+        if (existing != null) {
+          state = false;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return HomeScreen();
+              },
+            ),
           );
-
-          //save user data to database
-          final res2 = await _userAPI.saveUserData(userModel);
-          print('saved user data ${r.$id}');
-          res2.fold(
-            (l) => print('Failed to save user data: ${l.message}'),
-            (r) => print('User data saved successfully.'),
-          );
+          final existingUserData = UserModel.fromMap(existing.data);
+          showSnackbar(context, 'Welcome back ${existingUserData.name}!');
         }
-
-        // set authenticated state to false
-        state = false;
-
-        //navigate to home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return HomeScreen();
-            },
-          ),
+        String name = r.email.split('@')[0];
+        UserModel userModel = UserModel(
+          name: name,
+          email: r.email,
+          profilePicture: Constants.avatarDefault,
+          bannerPicture: Constants.bannerDefault,
+          uid: r.$id,
+          isAuthenticated: true,
+          karma: 0,
+          awards: [],
         );
-        showSnackbar(context, 'Login successful');
+        //save user data to database
+        final res2 = await _userAPI.saveUserData(userModel);
+        res2.fold(
+          (l) {
+            state = false;
+            showSnackbar(context, l.message);
+          },
+          (r2) async {
+            await _userAPI.getUserData(r.$id);
+
+            state = false;
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+
+            showSnackbar(context, "Account created successfully!");
+          },
+        );
       },
     );
   }
@@ -97,5 +125,12 @@ class AuthController extends StateNotifier<bool> {
   //current logged in user
   Future<User?> currentUser() async {
     return await _authAPI.currentUser();
+  }
+
+  //get user data from database
+  Future<UserModel> getUserData(String uid) async {
+    final row = await _userAPI.getUserData(uid);
+    final updatedUser = UserModel.fromMap(row.data);
+    return updatedUser;
   }
 }

@@ -11,11 +11,16 @@ void main() {
   runApp(ProviderScope(child: const MyApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Reddit',
       debugShowCheckedModeBanner: false,
@@ -37,7 +42,6 @@ class MyApp extends ConsumerWidget {
             },
             loading: () => Loader(),
           ),
-     
     );
   }
 }

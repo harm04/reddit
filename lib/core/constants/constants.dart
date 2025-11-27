@@ -11,4 +11,5 @@ class Constants {
       //svg
         static const discoverPath = 'assets/svg/discover.svg';
         static const settingsPath = 'assets/svg/settings.svg';
+        static const addPath = 'assets/svg/add.svg';
 }

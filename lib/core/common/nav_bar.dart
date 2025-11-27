@@ -13,6 +13,7 @@ class NavigationBarView extends StatefulWidget {
 
 class _NavigationBarViewState extends State<NavigationBarView> {
   late PersistentTabController? _controller;
+  
   @override
   void initState() {
     super.initState();

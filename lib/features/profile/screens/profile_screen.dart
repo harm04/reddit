@@ -7,7 +7,8 @@ import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+  final String userId;
+  const ProfileScreen({super.key, required this.userId});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileScreenState();
@@ -22,19 +23,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return isLoading
         ? Loader()
         : ref
-              .watch(userDetailsProvider(currentUser!.uid))
+              .watch(userDetailsProvider(widget.userId))
               .when(
                 data: (user) {
                   return Scaffold(
-                    appBar: AppBar(title: Text('Profile')),
                     body: NestedScrollView(
                       headerSliverBuilder: (context, innerBosIsScrolled) {
                         return [
                           SliverAppBar(
+                            automaticallyImplyActions: false,
                             floating: true,
                             snap: true,
                             expandedHeight: 150,
-
+                            title: Text(
+                              'Profile',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             flexibleSpace: Stack(
                               children: [
                                 Container(
@@ -121,7 +125,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         ],
                                       ),
                                     ),
-                                    user.uid == currentUser.uid
+                                    user.uid == currentUser!.uid
                                         ? IconButton(
                                             onPressed: () {},
                                             icon: SvgPicture.asset(

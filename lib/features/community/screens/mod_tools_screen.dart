@@ -54,7 +54,6 @@ class _ModToolsScreenState extends ConsumerState<ModToolsScreen> {
         );
   }
 
-  
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(communityControllerProvider);
@@ -191,20 +190,6 @@ class _ModToolsScreenState extends ConsumerState<ModToolsScreen> {
                                 ],
                               ),
                             ],
-                          ),
-                          SizedBox(height: 10),
-
-                          Divider(),
-
-                          ListTile(
-                            title: Text('Add moderator'),
-                            leading: SvgPicture.asset(
-                              Constants.crownPath,
-                              colorFilter: ColorFilter.mode(
-                                Pallete.whiteColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
                           ),
                         ],
                       ),

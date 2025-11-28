@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/home/screens/home_screen.dart';
 import 'package:reddit/features/profile/screens/profile_screen.dart';
 import 'package:reddit/theme/pallete.dart';
 
-class NavigationBarView extends StatefulWidget {
+class NavigationBarView extends ConsumerStatefulWidget {
   const NavigationBarView({super.key});
 
   @override
-  State<NavigationBarView> createState() => _NavigationBarViewState();
+  ConsumerState<NavigationBarView> createState() => _NavigationBarViewState();
 }
 
-class _NavigationBarViewState extends State<NavigationBarView> {
+class _NavigationBarViewState extends ConsumerState<NavigationBarView> {
   late PersistentTabController? _controller;
 
   @override
@@ -22,7 +24,13 @@ class _NavigationBarViewState extends State<NavigationBarView> {
   }
 
   List<Widget> _buildScreens() {
-    return [HomeScreen(), Center(child: Text('settings')), ProfileScreen()];
+    final currentUser = ref.watch(currentUserProvider).value;
+
+    return [
+      HomeScreen(),
+      Center(child: Text('settings')),
+      ProfileScreen(userId: currentUser!.uid),
+    ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {

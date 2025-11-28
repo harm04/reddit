@@ -7,6 +7,7 @@ import 'package:reddit/core/failure.dart';
 import 'package:reddit/core/providers.dart';
 import 'package:reddit/core/type_defs.dart';
 import 'package:reddit/models/community_model.dart';
+import 'package:reddit/models/user_model.dart';
 
 final communityAPIProvider = Provider((ref) {
   return CommunityAPI(db: ref.watch(appwriteDatabaseProvider));
@@ -19,6 +20,7 @@ abstract class ICommunityAPI {
   FutureEitherVoid updateCommunity(CommunityModel communityModel);
   Future<List<Row>> searchCommunity(String name);
   FutureEitherVoid joinCommunity(String communityId, String userId);
+  FutureEither<List<UserModel>> getCommunityMembers(String communityName);
 }
 
 class CommunityAPI implements ICommunityAPI {
@@ -131,20 +133,21 @@ class CommunityAPI implements ICommunityAPI {
         return result.rows;
       } catch (e) {
         print('Search failed, trying alternative approach: $e');
-        
+
         // Fallback: Get all communities and filter manually
         final allResult = await _db.listRows(
           databaseId: AppwriteConstants.databaseId,
           tableId: AppwriteConstants.communityTableId,
           queries: [Query.limit(100)],
         );
-        
+
         // Filter manually
         final filteredRows = allResult.rows.where((row) {
-          final communityName = row.data['name']?.toString().toLowerCase() ?? '';
+          final communityName =
+              row.data['name']?.toString().toLowerCase() ?? '';
           return communityName.contains(name.toLowerCase());
         }).toList();
-        
+
         return filteredRows;
       }
     } catch (error) {
@@ -165,8 +168,7 @@ class CommunityAPI implements ICommunityAPI {
       List<dynamic> members = row.data['members'] ?? [];
       if (!members.contains(userId)) {
         members.add(userId);
-      }
-      else{
+      } else {
         members.remove(userId);
       }
 
@@ -180,6 +182,52 @@ class CommunityAPI implements ICommunityAPI {
       return right(null);
     } catch (error, st) {
       return left(Failure(error.toString(), st.toString()));
+    }
+  }
+
+  // Add this method to your CommunityAPI class
+  @override
+  FutureEither<List<UserModel>> getCommunityMembers(
+    String communityName,
+  ) async {
+    try {
+      // First get the community
+      final communityResult = await getCommunityByName(communityName);
+
+      return communityResult.fold((failure) => left(failure), (
+        community,
+      ) async {
+        if (community == null) {
+          return left(Failure('Community not found', ''));
+        }
+
+        // Get all users who are members of this community
+        List<UserModel> members = [];
+
+        for (String memberId in community.members) {
+          try {
+            final userResult = await _db.listRows(
+              databaseId: AppwriteConstants.databaseId,
+              tableId: AppwriteConstants.userTableId,
+              queries: [Query.equal('\$id', memberId), Query.limit(1)],
+            );
+
+            if (userResult.rows.isNotEmpty) {
+              final userData = Map<String, dynamic>.from(
+                userResult.rows.first.data,
+              );
+              userData['\$id'] = userResult.rows.first.$id;
+              members.add(UserModel.fromMap(userData));
+            }
+          } catch (e) {
+            print('Error fetching user $memberId: $e');
+          }
+        }
+
+        return right(members);
+      });
+    } catch (error, stackTrace) {
+      return left(Failure(error.toString(), stackTrace.toString()));
     }
   }
 }

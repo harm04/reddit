@@ -4,7 +4,9 @@ import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/community/controller/community_controller.dart';
+import 'package:reddit/features/community/screens/community_members_screen.dart';
 import 'package:reddit/features/community/screens/mod_tools_screen.dart';
+import 'package:reddit/theme/pallete.dart';
 
 class CommunityScreen extends ConsumerWidget {
   final String communityName;
@@ -100,8 +102,23 @@ class CommunityScreen extends ConsumerWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      Text(
-                                        '${community.members.length.toString()} members',
+                                      GestureDetector(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return CommunityMembersScreen(
+                                                communityName: community.name,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '${community.members.length.toString()} members',
+                                          style: TextStyle(
+                                            color: Pallete.blueColor,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),

@@ -9,6 +9,7 @@ import 'package:reddit/core/utils/show_sncakbar.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/community/api/community_api.dart';
 import 'package:reddit/models/community_model.dart';
+import 'package:reddit/models/user_model.dart';
 
 //provider to get user communities
 final userCommunitiesProvider =
@@ -57,6 +58,19 @@ final searchCommunitiesProvider =
         return [];
       }
     });
+
+//community members provider
+final communityMembersProvider = FutureProvider.family<List<UserModel>, String>(
+  (ref, communityName) async {
+    final communityAPI = ref.watch(communityAPIProvider);
+    final result = await communityAPI.getCommunityMembers(communityName);
+
+    return result.fold((failure) {
+      print('Error getting community members: ${failure.message}');
+      return <UserModel>[];
+    }, (members) => members);
+  },
+);
 
 //provider for community controller
 final communityControllerProvider =
@@ -225,10 +239,9 @@ class CommunityController extends StateNotifier<bool> {
 
     if (!members.contains(uid)) {
       members.add(uid);
-    }
-      else{
+    } else {
       members.remove(uid);
-      }
+    }
 
     CommunityModel updatedCommunity = community.copyWith(members: members);
 

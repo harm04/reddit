@@ -4,7 +4,9 @@ import 'package:reddit/core/constants/constants.dart';
 import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
-import 'package:reddit/features/home/drawers/create_community_drawer.dart';
+
+import 'package:reddit/features/home/drawers/community_drawer.dart';
+import 'package:reddit/features/home/screens/search_community_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -38,6 +40,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
                 actions: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SearchCommunityScreen();
+                          },
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.search),
+                  ),
                   ClipOval(
                     child: FadeInImage(
                       placeholder: AssetImage(Constants.logoPath),

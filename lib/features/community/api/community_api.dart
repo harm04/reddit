@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:reddit/core/constants/appwrite_constants.dart';
@@ -16,6 +17,7 @@ abstract class ICommunityAPI {
   FutureEither<List<CommunityModel>> getUserCommunities(String uid);
   FutureEitherVoid getCommunityByName(String name);
   FutureEitherVoid updateCommunity(CommunityModel communityModel);
+  Future<List<Row>> searchCommunity(String name);
 }
 
 class CommunityAPI implements ICommunityAPI {
@@ -95,6 +97,7 @@ class CommunityAPI implements ICommunityAPI {
   }
 
   //update community details
+  @override
   FutureEitherVoid updateCommunity(CommunityModel communityModel) async {
     try {
       await _db.updateRow(
@@ -106,6 +109,46 @@ class CommunityAPI implements ICommunityAPI {
       return right(null);
     } catch (error, st) {
       return left(Failure(error.toString(), st.toString()));
+    }
+  }
+
+  @override
+  Future<List<Row>> searchCommunity(String name) async {
+    try {
+      // Handle empty query
+      if (name.trim().isEmpty) {
+        return [];
+      }
+
+      // If search by name attribute fails (no fulltext index), get all and filter
+      try {
+        final result = await _db.listRows(
+          databaseId: AppwriteConstants.databaseId,
+          tableId: AppwriteConstants.communityTableId,
+          queries: [Query.search('name', name)],
+        );
+        return result.rows;
+      } catch (e) {
+        print('Search failed, trying alternative approach: $e');
+        
+        // Fallback: Get all communities and filter manually
+        final allResult = await _db.listRows(
+          databaseId: AppwriteConstants.databaseId,
+          tableId: AppwriteConstants.communityTableId,
+          queries: [Query.limit(100)],
+        );
+        
+        // Filter manually
+        final filteredRows = allResult.rows.where((row) {
+          final communityName = row.data['name']?.toString().toLowerCase() ?? '';
+          return communityName.contains(name.toLowerCase());
+        }).toList();
+        
+        return filteredRows;
+      }
+    } catch (error) {
+      print('Search error: $error');
+      return [];
     }
   }
 }

@@ -10,6 +10,7 @@ import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/community/api/community_api.dart';
 import 'package:reddit/models/community_model.dart';
 
+//provider to get user communities
 final userCommunitiesProvider =
     FutureProvider.family<List<CommunityModel>, String>((ref, uid) async {
       final communityAPI = ref.watch(communityAPIProvider);
@@ -35,6 +36,29 @@ final communityByNameProvider = FutureProvider.family<CommunityModel?, String>((
   }, (community) => community);
 });
 
+//provider to search communities
+final searchCommunitiesProvider =
+    FutureProvider.family<List<CommunityModel>, String>((ref, query) async {
+      if (query.trim().isEmpty) {
+        return [];
+      }
+
+      final communityAPI = ref.watch(communityAPIProvider);
+
+      try {
+        final docs = await communityAPI.searchCommunity(query);
+        return docs.map((doc) {
+          final data = Map<String, dynamic>.from(doc.data);
+          data['\$id'] = doc.$id; // Add document ID
+          return CommunityModel.fromMap(data);
+        }).toList();
+      } catch (error) {
+        print('Error in searchCommunitiesProvider: $error');
+        return [];
+      }
+    });
+
+//provider for community controller
 final communityControllerProvider =
     StateNotifierProvider<CommunityController, bool>((ref) {
       return CommunityController(

@@ -25,3 +25,8 @@ final appwriteRealtimeProvider = Provider((ref) {
   return Realtime(ref.watch(appwriteClientProvider));
 });
 
+//appwrite Storage Provider
+final appwriteStorageProvider = Provider((ref) {
+  return Storage(ref.watch(appwriteClientProvider));
+}); 
+

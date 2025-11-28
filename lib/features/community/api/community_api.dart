@@ -14,6 +14,8 @@ final communityAPIProvider = Provider((ref) {
 abstract class ICommunityAPI {
   FutureEitherVoid createCommunity(CommunityModel communityModel);
   FutureEither<List<CommunityModel>> getUserCommunities(String uid);
+  FutureEitherVoid getCommunityByName(String name);
+  FutureEitherVoid updateCommunity(CommunityModel communityModel);
 }
 
 class CommunityAPI implements ICommunityAPI {
@@ -65,6 +67,45 @@ class CommunityAPI implements ICommunityAPI {
       return right(communities);
     } catch (error, stackTrace) {
       return left(Failure(error.toString(), stackTrace.toString()));
+    }
+  }
+
+  //get communities by name
+  @override
+  FutureEither<CommunityModel?> getCommunityByName(String name) async {
+    try {
+      final result = await _db.listRows(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.communityTableId,
+        queries: [Query.equal('name', name), Query.limit(1)],
+      );
+
+      if (result.rows.isEmpty) {
+        return right(null);
+      }
+      final row = result.rows.first;
+      final data = Map<String, dynamic>.from(row.data);
+      data['\$id'] = row.$id;
+      final community = CommunityModel.fromMap(data);
+
+      return right(community);
+    } catch (error, stackTrace) {
+      return left(Failure(error.toString(), stackTrace.toString()));
+    }
+  }
+
+  //update community details
+  FutureEitherVoid updateCommunity(CommunityModel communityModel) async {
+    try {
+      await _db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.communityTableId,
+        rowId: communityModel.id,
+        data: communityModel.toMap(),
+      );
+      return right(null);
+    } catch (error, st) {
+      return left(Failure(error.toString(), st.toString()));
     }
   }
 }

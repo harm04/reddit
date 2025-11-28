@@ -6,6 +6,7 @@ import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/community/controller/community_controller.dart';
+import 'package:reddit/features/community/screens/community_screen.dart';
 import 'package:reddit/features/community/screens/create_community_screen.dart';
 import 'package:reddit/theme/pallete.dart';
 
@@ -64,13 +65,20 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                           itemCount: communities.length,
                           itemBuilder: (context, index) {
                             final community = communities[index];
+                            print(community);
                             return ListTile(
                               title: Text(community.name),
                               leading: CircleAvatar(
                                 backgroundImage: NetworkImage(community.avatar),
                               ),
                               onTap: () {
-                                //handle community tap
+                                Navigator.of(context, rootNavigator: true).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => CommunityScreen(
+                                      communityName: community.name,
+                                    ),
+                                  ),
+                                );
                               },
                             );
                           },

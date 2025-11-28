@@ -218,4 +218,26 @@ class CommunityController extends StateNotifier<bool> {
       print('Update description error: $e');
     }
   }
+
+  //join community
+  void joinCommunity(CommunityModel community, String uid) async {
+    List<String> members = community.members;
+
+    if (!members.contains(uid)) {
+      members.add(uid);
+    }
+      else{
+      members.remove(uid);
+      }
+
+    CommunityModel updatedCommunity = community.copyWith(members: members);
+
+    final res = await communityAPI.updateCommunity(updatedCommunity);
+
+    res.fold((l) => null, (r) {
+      // Invalidate providers to refresh the data
+      ref.invalidate(communityByNameProvider);
+      ref.invalidate(userCommunitiesProvider);
+    });
+  }
 }

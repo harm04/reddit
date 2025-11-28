@@ -86,12 +86,19 @@ class CommunityScreen extends ConsumerWidget {
                                       child: Text('Mod tools'),
                                     )
                                   : OutlinedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        ref
+                                            .read(communityControllerProvider.notifier)
+                                            .joinCommunity(
+                                              community,
+                                              currentUser.uid,
+                                            );
+                                      },
                                       child: Text(
                                         community.members.contains(
                                               currentUser.uid,
                                             )
-                                            ? 'Joined'
+                                            ? 'Leave'
                                             : 'Join',
                                       ),
                                     ),

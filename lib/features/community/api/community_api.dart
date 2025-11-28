@@ -18,6 +18,7 @@ abstract class ICommunityAPI {
   FutureEitherVoid getCommunityByName(String name);
   FutureEitherVoid updateCommunity(CommunityModel communityModel);
   Future<List<Row>> searchCommunity(String name);
+  FutureEitherVoid joinCommunity(String communityId, String userId);
 }
 
 class CommunityAPI implements ICommunityAPI {
@@ -149,6 +150,36 @@ class CommunityAPI implements ICommunityAPI {
     } catch (error) {
       print('Search error: $error');
       return [];
+    }
+  }
+
+  //join or leave community function
+  FutureEitherVoid joinCommunity(String communityId, String userId) async {
+    try {
+      final row = await _db.getRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.communityTableId,
+        rowId: communityId,
+      );
+
+      List<dynamic> members = row.data['members'] ?? [];
+      if (!members.contains(userId)) {
+        members.add(userId);
+      }
+      else{
+        members.remove(userId);
+      }
+
+      await _db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.communityTableId,
+        rowId: communityId,
+        data: {'members': members},
+      );
+
+      return right(null);
+    } catch (error, st) {
+      return left(Failure(error.toString(), st.toString()));
     }
   }
 }

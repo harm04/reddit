@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:reddit/features/home/screens/home_screen.dart';
+import 'package:reddit/features/profile/screens/profile_screen.dart';
 import 'package:reddit/theme/pallete.dart';
 
 class NavigationBarView extends StatefulWidget {
@@ -13,7 +14,7 @@ class NavigationBarView extends StatefulWidget {
 
 class _NavigationBarViewState extends State<NavigationBarView> {
   late PersistentTabController? _controller;
-  
+
   @override
   void initState() {
     super.initState();
@@ -21,7 +22,7 @@ class _NavigationBarViewState extends State<NavigationBarView> {
   }
 
   List<Widget> _buildScreens() {
-    return [HomeScreen(), Center(child: Text('settings'))];
+    return [HomeScreen(), Center(child: Text('settings')), ProfileScreen()];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
@@ -35,6 +36,12 @@ class _NavigationBarViewState extends State<NavigationBarView> {
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.add, size: 26),
         title: ("Create"),
+        activeColorPrimary: Pallete.whiteColor,
+        inactiveColorPrimary: Colors.grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(CupertinoIcons.person_alt, size: 20),
+        title: ("Profile"),
         activeColorPrimary: Pallete.whiteColor,
         inactiveColorPrimary: Colors.grey,
       ),

@@ -52,25 +52,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     icon: const Icon(Icons.search),
                   ),
-                  SizedBox(width: 10),
-                  ClipOval(
-                    child: FadeInImage(
-                      placeholder: AssetImage(Constants.logoPath),
-                      image: NetworkImage(currentUser.profilePicture),
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                      fadeInDuration: const Duration(milliseconds: 300),
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          Constants.logoPath,
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ),
-                  ),
+                  // SizedBox(width: 10),
+                  // ClipOval(
+                  //   child: FadeInImage(
+                  //     placeholder: AssetImage(Constants.logoPath),
+                  //     image: NetworkImage(currentUser.profilePicture),
+                  //     width: 40,
+                  //     height: 40,
+                  //     fit: BoxFit.cover,
+                  //     fadeInDuration: const Duration(milliseconds: 300),
+                  //     imageErrorBuilder: (context, error, stackTrace) {
+                  //       return Image.asset(
+                  //         Constants.logoPath,
+                  //         width: 40,
+                  //         height: 40,
+                  //         fit: BoxFit.cover,
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   const SizedBox(width: 18),
                 ],
               ),

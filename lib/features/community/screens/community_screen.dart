@@ -30,10 +30,41 @@ class CommunityScreen extends ConsumerWidget {
                       expandedHeight: 150,
                       flexibleSpace: Stack(
                         children: [
-                          Positioned.fill(
-                            child: Image.network(
-                              community.banner,
-                              fit: BoxFit.cover,
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                image: NetworkImage(community.banner),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            // child: Positioned.fill(
+                            //   child: Image.network(
+                            //     user!.bannerPicture,
+                            //     fit: BoxFit.cover,
+                            //   ),
+                            // ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 50, // Height of the shadow gradient
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                ),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.9),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -43,29 +74,36 @@ class CommunityScreen extends ConsumerWidget {
                       padding: EdgeInsets.all(18),
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundImage: NetworkImage(community.avatar),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  Text(
-                                    'r/${community.name}',
-                                    style: const TextStyle(
-                                      fontSize: 19,
-                                      fontWeight: FontWeight.bold,
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: CircleAvatar(
+                                      radius: 35,
+                                      backgroundImage: NetworkImage(
+                                        community.avatar,
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    '${community.members.length.toString()} members',
+                                  SizedBox(width: 15),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'r/${community.name}',
+                                        style: const TextStyle(
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${community.members.length.toString()} members',
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -88,7 +126,10 @@ class CommunityScreen extends ConsumerWidget {
                                   : OutlinedButton(
                                       onPressed: () {
                                         ref
-                                            .read(communityControllerProvider.notifier)
+                                            .read(
+                                              communityControllerProvider
+                                                  .notifier,
+                                            )
                                             .joinCommunity(
                                               community,
                                               currentUser.uid,

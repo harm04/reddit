@@ -6,6 +6,8 @@ import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/profile/screens/edit_profile_screen.dart';
+import 'package:reddit/features/settings/screens/settings_screen.dart';
+import 'package:reddit/theme/pallete.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final String userId;
@@ -40,6 +42,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               'Profile',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
+                            actions: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18.0,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return SettingsScreen();
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: SvgPicture.asset(
+                                    Constants.settingsPath,
+                                    height: 22,
+                                  ),
+                                ),
+                              ),
+                            ],
                             flexibleSpace: Stack(
                               children: [
                                 Container(
@@ -73,7 +98,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         end: Alignment.bottomCenter,
                                         colors: [
                                           Colors.transparent,
-                                          Colors.black.withOpacity(0.9),
+                                         Pallete.blackColor.withOpacity(0.9),
                                         ],
                                       ),
                                     ),
@@ -144,7 +169,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               Constants.pencilPath,
                                               height: 20,
                                               colorFilter: ColorFilter.mode(
-                                                Colors.white,
+                                                Pallete.whiteColor,
                                                 BlendMode.srcIn,
                                               ),
                                             ),

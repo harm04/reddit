@@ -24,7 +24,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp(
       title: 'Reddit',
       debugShowCheckedModeBanner: false,
-      theme: Pallete.darkModeAppTheme,
+      theme: ref.watch(themeNotifierProvider),
 
       home: Consumer(
         builder: (context, ref, child) {

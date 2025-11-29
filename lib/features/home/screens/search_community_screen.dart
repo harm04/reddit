@@ -38,9 +38,9 @@ class _SearchCommunityScreenState extends ConsumerState<SearchCommunityScreen> {
           decoration: const InputDecoration(
             hintText: 'Search Communities',
             border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.grey),
+            hintStyle: TextStyle(color: Pallete.greyColor),
           ),
-          style: const TextStyle(color: Colors.white, fontSize: 18),
+          style: const TextStyle(color: Pallete.whiteColor, fontSize: 18),
           onChanged: _onSearchChanged,
           autofocus: true,
         ),
@@ -93,7 +93,7 @@ class _SearchCommunityScreenState extends ConsumerState<SearchCommunityScreen> {
                             const Icon(
                               Icons.search_off,
                               size: 80,
-                              color: Colors.grey,
+                              color: Pallete.greyColor,
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -109,7 +109,7 @@ class _SearchCommunityScreenState extends ConsumerState<SearchCommunityScreen> {
                               'Try searching with different keywords',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey,
+                                color: Pallete.greyColor,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -139,7 +139,7 @@ class _SearchCommunityScreenState extends ConsumerState<SearchCommunityScreen> {
                             '${community.members.length} members',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Colors.grey,
+                              color: Pallete.greyColor,
                             ),
                           ),
                           onTap: () {

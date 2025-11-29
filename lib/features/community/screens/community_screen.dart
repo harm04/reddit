@@ -63,7 +63,7 @@ class CommunityScreen extends ConsumerWidget {
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    Colors.black.withOpacity(0.9),
+                                    Pallete.blackColor.withOpacity(0.9),
                                   ],
                                 ),
                               ),

@@ -39,20 +39,20 @@ class _CommunityMembersScreenState
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.group_off, size: 80, color: Colors.grey),
+                      Icon(Icons.group_off, size: 80, color: Pallete.greyColor),
                       SizedBox(height: 16),
                       Text(
                         'No Members Found',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey,
+                          color: Pallete.greyColor,
                         ),
                       ),
                       SizedBox(height: 8),
                       Text(
                         'This community has no members yet',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                        style: TextStyle(fontSize: 16, color: Pallete.greyColor),
                       ),
                     ],
                   ),
@@ -173,7 +173,7 @@ class _CommunityMembersScreenState
                                                   icon: const Icon(
                                                     Icons.more_vert_sharp,
                                                     size: 16,
-                                                    color: Colors.grey,
+                                                    color:Pallete.greyColor,
                                                   ),
                                                 );
                                         },

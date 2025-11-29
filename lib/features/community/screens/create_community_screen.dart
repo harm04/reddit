@@ -65,7 +65,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
                   onPressed: _isFormValid ? createCommunity : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isFormValid
-                        ? Colors.blue
+                        ? Pallete.blueColor
                         : Pallete.greyColor,
                     foregroundColor: Pallete.whiteColor,
                   ),

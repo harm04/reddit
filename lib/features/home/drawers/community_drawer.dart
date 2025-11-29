@@ -28,6 +28,7 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                   leading: SvgPicture.asset(
                     Constants.addPath,
                     height: 20,
+                    //configure color for light and dark mode
                     colorFilter: ColorFilter.mode(
                       Pallete.whiteColor,
                       BlendMode.srcIn,

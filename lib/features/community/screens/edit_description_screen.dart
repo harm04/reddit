@@ -4,6 +4,7 @@ import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/community/controller/community_controller.dart';
 import 'package:reddit/models/community_model.dart';
+import 'package:reddit/theme/pallete.dart';
 
 class EditDescriptionScreen extends ConsumerStatefulWidget {
   final String communityName;
@@ -60,8 +61,8 @@ class _EditDescriptionScreenState extends ConsumerState<EditDescriptionScreen> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: BorderSide(color: Colors.white),
+                              foregroundColor: Pallete.whiteColor,
+                              side: BorderSide(color: Pallete.whiteColor),
                             ),
                             child: Text('Save'),
                           ),

@@ -94,7 +94,7 @@ class _ModToolsScreenState extends ConsumerState<ModToolsScreen> {
                             child: DottedBorder(
                               options: RoundedRectDottedBorderOptions(
                                 radius: const Radius.circular(10),
-                                color: Colors.grey,
+                                color:Pallete.greyColor,
                                 strokeCap: StrokeCap.round,
                                 dashPattern: const [10, 4],
                               ),

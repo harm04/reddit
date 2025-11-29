@@ -143,7 +143,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             child: DottedBorder(
                               options: RoundedRectDottedBorderOptions(
                                 radius: const Radius.circular(10),
-                                color: Colors.grey,
+                                color: Pallete.greyColor,
                                 strokeCap: StrokeCap.round,
                                 dashPattern: const [10, 4],
                               ),
@@ -184,7 +184,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                 children: [
                                   CircleAvatar(
                                     radius: 35,
-                                    backgroundColor: Colors.grey[300],
+                                    backgroundColor: Pallete.greyColor,
                                     backgroundImage: avatarFile != null
                                         ? FileImage(avatarFile!)
                                               as ImageProvider
@@ -197,7 +197,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                         ? Icon(
                                             Icons.person,
                                             size: 40,
-                                            color: Colors.grey[600],
+                                            color: Pallete.greyColor,
                                           )
                                         : null,
                                   ),
@@ -236,18 +236,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                         .fillColor,
                                     hintText: 'Name',
                                     hintStyle: TextStyle(
-                                      color: Colors.grey[600],
+                                      color: Pallete.greyColor,
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                        color: Colors.blue,
+                                      borderSide:  BorderSide(
+                                        color: Pallete.blueColor,
                                         width: 2,
                                       ),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                        color: Colors.grey[600]!,
+                                        color: Pallete.greyColor,
                                         width: 1,
                                       ),
                                       borderRadius: BorderRadius.circular(10),

@@ -253,4 +253,25 @@ class CommunityController extends StateNotifier<bool> {
       ref.invalidate(userCommunitiesProvider);
     });
   }
+
+   //make moderator
+  void makeModerator(CommunityModel community, String uid) async {
+    List<String> mods = community.mods;
+
+    if (!mods.contains(uid)) {
+      mods.add(uid);
+    } else {
+      mods.remove(uid);
+    }
+
+    CommunityModel updatedCommunity = community.copyWith(mods: mods);
+
+    final res = await communityAPI.updateCommunity(updatedCommunity);
+
+    res.fold((l) => null, (r) {
+      // Invalidate providers to refresh the data
+      ref.invalidate(communityByNameProvider);
+      ref.invalidate(userCommunitiesProvider);
+    });
+  }
 }

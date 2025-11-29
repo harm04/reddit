@@ -23,6 +23,8 @@ class _CommunityMembersScreenState
     extends ConsumerState<CommunityMembersScreen> {
   @override
   Widget build(BuildContext context) {
+    final currentUser = ref.watch(currentUserProvider).value;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('r/${widget.communityName} Members'),
@@ -82,6 +84,7 @@ class _CommunityMembersScreenState
                           final member = members[index];
 
                           return Card(
+                            color: Pallete.greyColor,
                             margin: const EdgeInsets.symmetric(
                               horizontal: 8,
                               vertical: 4,
@@ -92,12 +95,18 @@ class _CommunityMembersScreenState
                                   member.profilePicture,
                                 ),
                               ),
-                              title: Text(
-                                member.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
+                              title: Row(
+                                children: [
+                                  Text(
+                                    member.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(width: 6),
+                                  _buildMemberBadge(member),
+                                ],
                               ),
                               subtitle: Text(
                                 '${member.karma} karma',
@@ -107,9 +116,74 @@ class _CommunityMembersScreenState
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              trailing: _buildMemberBadge(member),
+                              trailing: Consumer(
+                                builder: (context, ref, child) {
+                                  return ref
+                                      .watch(
+                                        communityByNameProvider(
+                                          widget.communityName,
+                                        ),
+                                      )
+                                      .when(
+                                        data: (community) {
+                                          return member.uid == currentUser!.uid
+                                              ? Text('You')
+                                              : PopupMenuButton(
+                                                  itemBuilder: (context) => [
+                                                    community!.mods.contains(
+                                                          member.uid,
+                                                        )
+                                                        ? PopupMenuItem(
+                                                            value: 'remove_mod',
+                                                            child: Text(
+                                                              'Remove Moderator',
+                                                            ),
+                                                          )
+                                                        : PopupMenuItem(
+                                                            value: 'make_mod',
+                                                            child: Text(
+                                                              'Make Moderator',
+                                                            ),
+                                                          ),
+                                                  ],
+                                                  onSelected: (value) {
+                                                    if (value == 'make_mod') {
+                                                      ref
+                                                          .read(
+                                                            communityControllerProvider
+                                                                .notifier,
+                                                          )
+                                                          .makeModerator(
+                                                            community!,
+                                                            member.uid,
+                                                          );
+                                                    } else if (value ==
+                                                        'remove_mod') {
+                                                      ref
+                                                          .read(
+                                                            communityControllerProvider
+                                                                .notifier,
+                                                          )
+                                                          .makeModerator(
+                                                            community!,
+                                                            member.uid,
+                                                          );
+                                                    }
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.more_vert_sharp,
+                                                    size: 16,
+                                                    color: Colors.grey,
+                                                  ),
+                                                );
+                                        },
+                                        error: (error, st) =>
+                                            ErrorText(error: error.toString()),
+                                        loading: () => const Loader(),
+                                      );
+                                },
+                              ),
                               onTap: () {
-                                // Navigate to member's profile screen
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -135,8 +209,6 @@ class _CommunityMembersScreenState
   }
 
   Widget _buildMemberBadge(UserModel member) {
-    final currentUser = ref.watch(currentUserProvider).value;
-
     return ref
         .watch(communityByNameProvider(widget.communityName))
         .when(
@@ -150,30 +222,7 @@ class _CommunityMembersScreenState
                 colorFilter: ColorFilter.mode(Colors.amber, BlendMode.srcIn),
               );
             }
-
-            return PopupMenuButton(
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'message',
-                  child: Text('Send Message'),
-                ),
-                community.mods.contains(currentUser!.uid)
-                    ? PopupMenuItem(
-                        value: 'make_mod',
-                        child: Text('Make Moderator'),
-                      )
-                    : PopupMenuItem(
-                        value: 'report_user',
-                        child: Text('Report User'),
-                      ),
-              ],
-              onSelected: (value) {},
-              icon: const Icon(
-                Icons.more_vert_sharp,
-                size: 16,
-                color: Colors.grey,
-              ),
-            );
+            return const SizedBox();
           },
           error: (error, st) => const SizedBox(),
           loading: () => const SizedBox(),

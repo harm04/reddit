@@ -21,6 +21,7 @@ abstract class ICommunityAPI {
   Future<List<Row>> searchCommunity(String name);
   FutureEitherVoid joinCommunity(String communityId, String userId);
   FutureEither<List<UserModel>> getCommunityMembers(String communityName);
+  FutureEitherVoid makeModerator(String communityId, String userId);
 }
 
 class CommunityAPI implements ICommunityAPI {
@@ -157,6 +158,7 @@ class CommunityAPI implements ICommunityAPI {
   }
 
   //join or leave community function
+  @override
   FutureEitherVoid joinCommunity(String communityId, String userId) async {
     try {
       final row = await _db.getRow(
@@ -228,6 +230,36 @@ class CommunityAPI implements ICommunityAPI {
       });
     } catch (error, stackTrace) {
       return left(Failure(error.toString(), stackTrace.toString()));
+    }
+  }
+
+  //make moderator
+  @override
+  FutureEitherVoid makeModerator(String communityId, String userId) async {
+    try {
+      final row = await _db.getRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.communityTableId,
+        rowId: communityId,
+      );
+
+      List<dynamic> mods = row.data['mods'] ?? [];
+      if (!mods.contains(userId)) {
+        mods.add(userId);
+      } else {
+        mods.remove(userId);
+      }
+
+      await _db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.communityTableId,
+        rowId: communityId,
+        data: {'mods': mods},
+      );
+
+      return right(null);
+    } catch (error, st) {
+      return left(Failure(error.toString(), st.toString()));
     }
   }
 }

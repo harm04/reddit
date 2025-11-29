@@ -57,6 +57,8 @@ class _ModToolsScreenState extends ConsumerState<ModToolsScreen> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(communityControllerProvider);
+    final currentTheme = ref.watch(themeNotifierProvider);
+
     return ref
         .watch(communityByNameProvider(widget.communityName))
         .when(
@@ -94,7 +96,7 @@ class _ModToolsScreenState extends ConsumerState<ModToolsScreen> {
                             child: DottedBorder(
                               options: RoundedRectDottedBorderOptions(
                                 radius: const Radius.circular(10),
-                                color:Pallete.greyColor,
+                                color: Pallete.greyColor,
                                 strokeCap: StrokeCap.round,
                                 dashPattern: const [10, 4],
                               ),
@@ -114,7 +116,7 @@ class _ModToolsScreenState extends ConsumerState<ModToolsScreen> {
                                           Constants.cameraPath,
                                           height: 40,
                                           colorFilter: ColorFilter.mode(
-                                            Pallete.whiteColor,
+                                            currentTheme.iconTheme.color!,
                                             BlendMode.srcIn,
                                           ),
                                         ),

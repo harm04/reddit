@@ -22,6 +22,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider).value;
     bool isLoading = ref.watch(authControllerProvider);
+    final currentTheme = ref.watch(themeNotifierProvider);
 
     return isLoading
         ? Loader()
@@ -49,8 +50,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 ),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
+                                    Navigator.of(
                                       context,
+                                      rootNavigator: true,
+                                    ).push(
                                       MaterialPageRoute(
                                         builder: (context) {
                                           return SettingsScreen();
@@ -61,6 +64,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   child: SvgPicture.asset(
                                     Constants.settingsPath,
                                     height: 22,
+                                    colorFilter: ColorFilter.mode(
+                                      currentTheme.iconTheme.color!,
+                                      BlendMode.srcIn,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -98,7 +105,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         end: Alignment.bottomCenter,
                                         colors: [
                                           Colors.transparent,
-                                         Pallete.blackColor.withOpacity(0.9),
+                                          Pallete.blackColor.withOpacity(0.9),
                                         ],
                                       ),
                                     ),
@@ -154,8 +161,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     user.uid == currentUser!.uid
                                         ? IconButton(
                                             onPressed: () {
-                                              Navigator.push(
+                                              Navigator.of(
                                                 context,
+                                                rootNavigator: true,
+                                              ).push(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       EditProfileScreen(
@@ -169,7 +178,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               Constants.pencilPath,
                                               height: 20,
                                               colorFilter: ColorFilter.mode(
-                                                Pallete.whiteColor,
+                                                currentTheme.iconTheme.color!,
                                                 BlendMode.srcIn,
                                               ),
                                             ),

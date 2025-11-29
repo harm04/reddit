@@ -15,6 +15,7 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentTheme = ref.watch(themeNotifierProvider);
     return Drawer(
       elevation: 20,
       child: Scaffold(
@@ -28,9 +29,9 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                   leading: SvgPicture.asset(
                     Constants.addPath,
                     height: 20,
-                    //configure color for light and dark mode
+
                     colorFilter: ColorFilter.mode(
-                      Pallete.whiteColor,
+                      currentTheme.iconTheme.color!,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -64,6 +65,7 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: communities.length,
+                          
                           itemBuilder: (context, index) {
                             final community = communities[index];
                             print(community);
@@ -96,7 +98,7 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                     Constants.discoverPath,
                     height: 20,
                     colorFilter: ColorFilter.mode(
-                      Pallete.whiteColor,
+                      currentTheme.iconTheme.color!,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -108,7 +110,7 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                     Constants.settingsPath,
                     height: 20,
                     colorFilter: ColorFilter.mode(
-                      Pallete.whiteColor,
+                      currentTheme.iconTheme.color!,
                       BlendMode.srcIn,
                     ),
                   ),

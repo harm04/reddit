@@ -15,4 +15,7 @@ class Constants {
         static const crownPath = 'assets/svg/crown.svg';
         static const cameraPath = 'assets/svg/camera.svg';
         static const pencilPath = 'assets/svg/pencil.svg';
+        static const textPath = 'assets/svg/text.svg';
+        static const imagePath = 'assets/svg/image.svg';
+        static const linkPath = 'assets/svg/link.svg';
 }

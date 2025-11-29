@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/home/screens/home_screen.dart';
+import 'package:reddit/features/post/screens/choose_post_type_screen.dart';
 import 'package:reddit/features/profile/screens/profile_screen.dart';
 import 'package:reddit/theme/pallete.dart';
 
@@ -28,7 +29,7 @@ class _NavigationBarViewState extends ConsumerState<NavigationBarView> {
 
     return [
       HomeScreen(),
-      Center(child: Text('settings')),
+      ChoosePostTypeScreen(),
       ProfileScreen(userId: currentUser!.uid),
     ];
   }
@@ -51,7 +52,7 @@ class _NavigationBarViewState extends ConsumerState<NavigationBarView> {
         icon: Icon(CupertinoIcons.person_alt, size: 20),
         title: ("Profile"),
         activeColorPrimary: Pallete.whiteColor,
-        inactiveColorPrimary:Pallete.greyColor,
+        inactiveColorPrimary: Pallete.greyColor,
       ),
     ];
   }

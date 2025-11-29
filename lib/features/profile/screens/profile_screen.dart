@@ -5,6 +5,7 @@ import 'package:reddit/core/constants/constants.dart';
 import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
+import 'package:reddit/features/profile/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final String userId;
@@ -127,7 +128,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ),
                                     user.uid == currentUser!.uid
                                         ? IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EditProfileScreen(
+                                                        userId: user.uid,
+                                                        name: user.name,
+                                                      ),
+                                                ),
+                                              );
+                                            },
                                             icon: SvgPicture.asset(
                                               Constants.pencilPath,
                                               height: 20,

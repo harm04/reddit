@@ -40,19 +40,19 @@ class _NavigationBarViewState extends ConsumerState<NavigationBarView> {
         icon: Icon(CupertinoIcons.home, size: 20),
         title: ("Home"),
         activeColorPrimary: Pallete.whiteColor,
-        inactiveColorPrimary: Pallete.greyColor,
+        inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.add, size: 26),
         title: ("Create"),
         activeColorPrimary: Pallete.whiteColor,
-        inactiveColorPrimary: Pallete.greyColor,
+        inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.person_alt, size: 20),
         title: ("Profile"),
         activeColorPrimary: Pallete.whiteColor,
-        inactiveColorPrimary: Pallete.greyColor,
+        inactiveColorPrimary: Colors.grey,
       ),
     ];
   }

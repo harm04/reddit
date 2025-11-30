@@ -8,10 +8,12 @@ import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/community/controller/community_controller.dart';
 import 'package:reddit/features/community/screens/community_screen.dart';
 import 'package:reddit/features/community/screens/create_community_screen.dart';
+import 'package:reddit/features/home/screens/search_community_screen.dart';
+import 'package:reddit/features/settings/screens/settings_screen.dart';
 import 'package:reddit/theme/pallete.dart';
 
-class CreateCommunitiesDrawer extends ConsumerWidget {
-  const CreateCommunitiesDrawer({super.key});
+class HomeDrawer extends ConsumerWidget {
+  const HomeDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,7 +67,7 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: communities.length,
-                          
+
                           itemBuilder: (context, index) {
                             final community = communities[index];
                             print(community);
@@ -102,7 +104,15 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const SearchCommunityScreen();
+                        },
+                      ),
+                    );
+                  },
                 ),
                 ListTile(
                   title: const Text('Settings'),
@@ -114,7 +124,15 @@ class CreateCommunitiesDrawer extends ConsumerWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return SettingsScreen();
+                        },
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

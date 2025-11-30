@@ -4,9 +4,13 @@ import 'package:reddit/core/constants/constants.dart';
 import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
-
-import 'package:reddit/features/home/drawers/community_drawer.dart';
+import 'package:reddit/features/home/drawers/home_drawer.dart';
 import 'package:reddit/features/home/screens/search_community_screen.dart';
+import 'package:reddit/features/home/screens/search_user_screen.dart';
+import 'package:reddit/features/home/widgets/community_posts.dart';
+import 'package:reddit/features/home/widgets/home_post.dart';
+import 'package:reddit/features/post/controller/post_controller.dart';
+import 'package:reddit/theme/pallete.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -15,7 +19,26 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void displayEndDrawer(BuildContext context) {
+    Scaffold.of(context).openDrawer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ref
@@ -30,56 +53,88 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               );
             }
             return Scaffold(
-              appBar: AppBar(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              drawer: const HomeDrawer(),
+              body: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverAppBar(
+                    floating: true,
+                    snap: true,
+                    pinned: false,
+                    expandedHeight: 0,
+                    forceElevated: innerBoxIsScrolled,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(Constants.logoPath, height: 30),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Reddit',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    centerTitle: true,
+                    leading: Builder(
+                      builder: (context) => IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                    ),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => const SearchUserScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.search),
+                      ),
+
+                      const SizedBox(width: 18),
+                    ],
+                    bottom: TabBar(
+                      controller: _tabController,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorColor: Pallete.redColor,
+                      labelColor: Pallete.redColor,
+                      unselectedLabelColor: Colors.grey,
+                      labelStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      unselectedLabelStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      tabs: const [
+                        Tab(text: 'Home'),
+                        Tab(text: 'Communities'),
+                      ],
+                    ),
+                  ),
+                ],
+                body: TabBarView(
+                  controller: _tabController, // FIXED: Added controller
                   children: [
-                    Image.asset(Constants.logoPath, height: 30),
-                    const SizedBox(width: 8),
-                    const Text('Reddit'),
+                    // Home Posts Tab
+                    HomePosts(),
+                    // Communities Tab
+                    CommunityPosts(),
                   ],
                 ),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return SearchCommunityScreen();
-                          },
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.search),
-                  ),
-                  // SizedBox(width: 10),
-                  // ClipOval(
-                  //   child: FadeInImage(
-                  //     placeholder: AssetImage(Constants.logoPath),
-                  //     image: NetworkImage(currentUser.profilePicture),
-                  //     width: 40,
-                  //     height: 40,
-                  //     fit: BoxFit.cover,
-                  //     fadeInDuration: const Duration(milliseconds: 300),
-                  //     imageErrorBuilder: (context, error, stackTrace) {
-                  //       return Image.asset(
-                  //         Constants.logoPath,
-                  //         width: 40,
-                  //         height: 40,
-                  //         fit: BoxFit.cover,
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
-                  const SizedBox(width: 18),
-                ],
               ),
-              drawer: CreateCommunitiesDrawer(),
-              body: SafeArea(child: Column()),
             );
           },
           error: (err, st) {
-            return Scaffold(body: ErrorText(error: err.toString()));
+            return Scaffold(
+              appBar: AppBar(title: const Text('Error')),
+              body: ErrorText(error: err.toString()),
+            );
           },
           loading: () {
             return const Scaffold(body: Loader());

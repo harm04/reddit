@@ -28,25 +28,20 @@ class _MyAppState extends ConsumerState<MyApp> {
 
       home: Consumer(
         builder: (context, ref, child) {
-          // Watch the current user provider for real-time auth state
           return ref
               .watch(currentUserProvider)
               .when(
                 data: (user) {
                   if (user != null) {
-                    // User is authenticated and data is available
                     return NavigationBarView();
                   } else {
-                    // User is not authenticated
-                    return const LoginScreen(); // Replace with your login screen
+                    return const LoginScreen();
                   }
                 },
                 loading: () {
-                  // Show loader while checking authentication
                   return const Scaffold(body: Loader());
                 },
                 error: (error, stackTrace) {
-                  // Show error if authentication check fails
                   return Scaffold(
                     body: ErrorText(
                       error: 'Authentication Error: ${error.toString()}',

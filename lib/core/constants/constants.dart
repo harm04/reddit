@@ -8,14 +8,17 @@ class Constants {
   static const avatarDefault =
       'https://external-preview.redd.it/5kh5OreeLd85QsqYO1Xz_4XSLYwZntfjqou-8fyBFoE.png?auto=webp&s=dbdabd04c399ce9c761ff899f5d38656d1de87c2';
 
-      //svg
-        static const discoverPath = 'assets/svg/discover.svg';
-        static const settingsPath = 'assets/svg/settings.svg';
-        static const addPath = 'assets/svg/add.svg';
-        static const crownPath = 'assets/svg/crown.svg';
-        static const cameraPath = 'assets/svg/camera.svg';
-        static const pencilPath = 'assets/svg/pencil.svg';
-        static const textPath = 'assets/svg/text.svg';
-        static const imagePath = 'assets/svg/image.svg';
-        static const linkPath = 'assets/svg/link.svg';
+  //svg
+  static const discoverPath = 'assets/svg/discover.svg';
+  static const settingsPath = 'assets/svg/settings.svg';
+  static const addPath = 'assets/svg/add.svg';
+  static const crownPath = 'assets/svg/crown.svg';
+  static const cameraPath = 'assets/svg/camera.svg';
+  static const pencilPath = 'assets/svg/pencil.svg';
+  static const textPath = 'assets/svg/text.svg';
+  static const imagePath = 'assets/svg/image.svg';
+  static const linkPath = 'assets/svg/link.svg';
+  static const likeFilledPath = 'assets/svg/like_filled.svg';
+  static const likeOutlinePath = 'assets/svg/like_outline.svg';
+  static const commentsPath = 'assets/svg/comments.svg';
 }

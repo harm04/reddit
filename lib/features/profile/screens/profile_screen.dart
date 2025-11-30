@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:reddit/core/common/post_card.dart';
 import 'package:reddit/core/constants/constants.dart';
 import 'package:reddit/core/utils/error.dart';
 import 'package:reddit/core/utils/loader.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
+import 'package:reddit/features/post/controller/post_controller.dart';
 import 'package:reddit/features/profile/screens/edit_profile_screen.dart';
-import 'package:reddit/features/settings/screens/settings_screen.dart';
 import 'package:reddit/theme/pallete.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -43,35 +44,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               'Profile',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            actions: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 18.0,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(
-                                      context,
-                                      rootNavigator: true,
-                                    ).push(
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return SettingsScreen();
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: SvgPicture.asset(
-                                    Constants.settingsPath,
-                                    height: 22,
-                                    colorFilter: ColorFilter.mode(
-                                      currentTheme.iconTheme.color!,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+
                             flexibleSpace: Stack(
                               children: [
                                 Container(
@@ -82,19 +55,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  // child: Positioned.fill(
-                                  //   child: Image.network(
-                                  //     user!.bannerPicture,
-                                  //     fit: BoxFit.cover,
-                                  //   ),
-                                  // ),
                                 ),
                                 Positioned(
                                   bottom: 0,
                                   left: 0,
                                   right: 0,
                                   child: Container(
-                                    height: 50, // Height of the shadow gradient
+                                    height: 50,
                                     decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(10),
@@ -191,7 +158,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                         ];
                       },
-                      body: Center(child: Text('Displaying communities')),
+                      body: ref
+                          .watch(userPostsProvider(user!.uid))
+                          .when(
+                            data: (userPost) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Divider(),
+
+                                  Expanded(
+                                    child: userPost.isEmpty
+                                        ? const Center(
+                                            child: Text('No posts yet'),
+                                          )
+                                        : ListView.builder(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 10,
+                                            ),
+                                            itemCount: userPost.length,
+                                            itemBuilder: (context, index) {
+                                              final post = userPost[index];
+                                              return PostCard(postModel: post);
+                                            },
+                                          ),
+                                  ),
+                                ],
+                              );
+                            },
+                            error: (error, st) =>
+                                ErrorText(error: error.toString()),
+                            loading: () => Loader(),
+                          ),
                     ),
                   );
                 },

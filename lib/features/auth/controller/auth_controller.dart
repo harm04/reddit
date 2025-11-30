@@ -22,6 +22,28 @@ final authControllerProvider = StateNotifierProvider<AuthController, bool>((
   );
 });
 
+//provider to search users
+final searchUsersProvider = FutureProvider.family<List<UserModel>, String>((ref, query) async {
+  if (query.trim().isEmpty) {
+    return [];
+  }
+  
+  final userAPI = ref.watch(userAPIProvider);
+  final result = await userAPI.searchUsersTyped(query.trim());
+  
+  return result.fold(
+    (failure) {
+      print('Error searching users: ${failure.message}');
+      return <UserModel>[];
+    },
+    (users) {
+      print('Found ${users.length} users for query: "$query"');
+      return users;
+    },
+  );
+});
+
+
 //providere for current user
 final currentUserAccountProvider = FutureProvider<User?>((ref) async {
   // Watch the auth state to refresh when login happens
@@ -193,5 +215,17 @@ class AuthController extends StateNotifier<bool> {
       print('Error getting user data for uid $uid: $e');
       return null;
     }
+  }
+  Future<List<UserModel>> searchUsers(String query) async {
+    if (query.trim().isEmpty) return [];
+    
+    final result = await _userAPI.searchUsersTyped(query.trim());
+    return result.fold(
+      (failure) {
+        print('Error searching users: ${failure.message}');
+        return [];
+      },
+      (users) => users,
+    );
   }
 }

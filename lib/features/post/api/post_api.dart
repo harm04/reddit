@@ -14,8 +14,19 @@ final postAPIProvider = Provider((ref) {
 abstract class IPostAPI {
   FutureEitherVoid createPost(PostModel postModel);
   FutureEither<List<PostModel>> getUserPosts(String uid);
-  // FutureEither<List<PostModel>?> getPostByUid(String uid);
+  FutureEitherVoid deletePost(String postId);
   FutureEither<List<PostModel>> getPostByCommunity(String communityName);
+  FutureEither<List<PostModel>> getAllPosts();
+  FutureEitherVoid downvotePost(
+    String postId,
+    List<String> upvotes,
+    List<String> downvotes,
+  );
+  FutureEitherVoid upvotePost(
+    String postId,
+    List<String> upvotes,
+    List<String> downvotes,
+  );
 }
 
 class PostAPI implements IPostAPI {
@@ -59,9 +70,9 @@ class PostAPI implements IPostAPI {
       return left(Failure(error.toString(), stackTrace.toString()));
     }
   }
-  
+
   @override
-  FutureEither<List<PostModel>> getPostByCommunity(String communityName) async{
+  FutureEither<List<PostModel>> getPostByCommunity(String communityName) async {
     try {
       final result = await _db.listRows(
         databaseId: AppwriteConstants.databaseId,
@@ -81,84 +92,77 @@ class PostAPI implements IPostAPI {
     }
   }
 
-  // //get communities by name
-  // @override
-  // FutureEither<List<PostModel>?> getPostByUid(String uid) async {
-  //   try {
-  //     final result = await _db.listRows(
-  //       databaseId: AppwriteConstants.databaseId,
-  //       tableId: AppwriteConstants.postTableId,
-  //       queries: [Query.equal('uid', uid)],
-  //     );
+  //get all post
+  FutureEither<List<PostModel>> getAllPosts() async {
+    try {
+      final result = await _db.listRows(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.postTableId,
+      );
 
-  //     if (result.rows.isEmpty) {
-  //       return right(null);
-  //     }
-  //     final row = result.rows.first;
-  //     final data = Map<String, dynamic>.from(row.data);
-  //     data['\$id'] = row.$id;
-  //     final post = PostModel.fromMap(data);
+      final posts = result.rows.map((row) {
+        final data = Map<String, dynamic>.from(row.data);
+        data['\$id'] = row.$id; // Add the row ID to the data
+        return PostModel.fromMap(data);
+      }).toList();
 
-  //     return right(post);
-  //   } catch (error, stackTrace) {
-  //     return left(Failure(error.toString(), stackTrace.toString()));
-  //   }
-  // }
+      return right(posts);
+    } catch (error, stackTrace) {
+      return left(Failure(error.toString(), stackTrace.toString()));
+    }
+  }
 
-  // //update community details
-  // @override
-  // FutureEitherVoid updateCommunity(CommunityModel communityModel) async {
-  //   try {
-  //     await _db.updateRow(
-  //       databaseId: AppwriteConstants.databaseId,
-  //       tableId: AppwriteConstants.communityTableId,
-  //       rowId: communityModel.id,
-  //       data: communityModel.toMap(),
-  //     );
-  //     return right(null);
-  //   } catch (error, st) {
-  //     return left(Failure(error.toString(), st.toString()));
-  //   }
-  // }
+  // ADDED: Upvote post method
+  @override
+  FutureEitherVoid upvotePost(
+    String postId,
+    List<String> upvotes,
+    List<String> downvotes,
+  ) async {
+    try {
+      await _db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.postTableId,
+        rowId: postId,
+        data: {'upvotes': upvotes, 'downvotes': downvotes},
+      );
+      return right(null);
+    } catch (error, st) {
+      return left(Failure(error.toString(), st.toString()));
+    }
+  }
 
-  // @override
-  // Future<List<Row>> searchCommunity(String name) async {
-  //   try {
-  //     // Handle empty query
-  //     if (name.trim().isEmpty) {
-  //       return [];
-  //     }
+  // ADDED: Downvote post method
+  @override
+  FutureEitherVoid downvotePost(
+    String postId,
+    List<String> upvotes,
+    List<String> downvotes,
+  ) async {
+    try {
+      await _db.updateRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.postTableId,
+        rowId: postId,
+        data: {'upvotes': upvotes, 'downvotes': downvotes},
+      );
+      return right(null);
+    } catch (error, st) {
+      return left(Failure(error.toString(), st.toString()));
+    }
+  }
 
-  //     // If search by name attribute fails (no fulltext index), get all and filter
-  //     try {
-  //       final result = await _db.listRows(
-  //         databaseId: AppwriteConstants.databaseId,
-  //         tableId: AppwriteConstants.communityTableId,
-  //         queries: [Query.search('name', name)],
-  //       );
-  //       return result.rows;
-  //     } catch (e) {
-  //       print('Search failed, trying alternative approach: $e');
-
-  //       // Fallback: Get all communities and filter manually
-  //       final allResult = await _db.listRows(
-  //         databaseId: AppwriteConstants.databaseId,
-  //         tableId: AppwriteConstants.communityTableId,
-  //         queries: [Query.limit(100)],
-  //       );
-
-  //       // Filter manually
-  //       final filteredRows = allResult.rows.where((row) {
-  //         final communityName =
-  //             row.data['name']?.toString().toLowerCase() ?? '';
-  //         return communityName.contains(name.toLowerCase());
-  //       }).toList();
-
-  //       return filteredRows;
-  //     }
-  //   } catch (error) {
-  //     print('Search error: $error');
-  //     return [];
-  //   }
-  // }
+  //delete post
+  FutureEitherVoid deletePost(String postId) async {
+    try {
+      await _db.deleteRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.postTableId,
+        rowId: postId,
+      );
+      return right(null);
+    } catch (error, st) {
+      return left(Failure(error.toString(), st.toString()));
+    }
+  }
 }

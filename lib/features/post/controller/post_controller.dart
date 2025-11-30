@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:reddit/core/common/storage/storage_api.dart';
 import 'package:reddit/core/utils/show_sncakbar.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
+import 'package:reddit/features/community/controller/community_controller.dart';
 import 'package:reddit/features/post/api/post_api.dart';
 import 'package:reddit/models/community_model.dart';
 import 'package:reddit/models/post_model.dart';
@@ -34,20 +35,24 @@ final userPostsProvider = FutureProvider.family<List<PostModel>, String>((
   }, (posts) => posts);
 });
 
-//provider to get posts by uid
-// final postsByUidProvider = FutureProvider.family<PostModel?, String>((
-//   ref,
-//   uid,
-// ) async {
-//   final postAPI = ref.watch(postAPIProvider);
-//   final result = await postAPI.getPostByUid(uid);
+//get all post from community whose user is member of
+final userCommunityPostsProvider = FutureProvider<List<PostModel>>((ref) async {
+  final currentUser = ref.watch(currentUserProvider).value;
+  if (currentUser == null) {
+    return [];
+  }
 
-//   return result.fold((failure) {
-//     print('Error getting post by uid: ${failure.message}');
-//     return null;
-//   }, (post) => post);
-// });
+  final userCommunities = await ref.watch(
+    userCommunitiesProvider(currentUser.uid).future,
+  );
 
+  final postController = ref.watch(postControllerProvider.notifier);
+  final posts = await postController.getPostsForUserCommunities(
+    userCommunities,
+  );
+
+  return posts;
+});
 //provider for post controller
 final postControllerProvider = StateNotifierProvider<PostController, bool>((
   ref,
@@ -57,6 +62,14 @@ final postControllerProvider = StateNotifierProvider<PostController, bool>((
     storageAPI: ref.watch(storageAPIProvider),
     ref: ref,
   );
+});
+
+//get all posts provider
+final allPostsProvider = FutureProvider<List<PostModel>>((ref) async {
+  final postController = ref.watch(postControllerProvider.notifier);
+  final result = await postController.getAllPosts();
+
+  return result;
 });
 
 class PostController extends StateNotifier<bool> {
@@ -220,8 +233,39 @@ class PostController extends StateNotifier<bool> {
     }, (posts) => posts);
   }
 
-  // Future<PostModel?> getPostByUid(String uid) async {
-  //   final result = await postAPI.getPostByUid(uid);
-  //   return result.fold((l) => null, (r) => r);
-  // }
+  //get  all posts
+  Future<List<PostModel>> getAllPosts() async {
+    final result = await postAPI.getAllPosts();
+    return result.fold((l) {
+      print('Error getting all posts: ${l.message}');
+      return <PostModel>[];
+    }, (posts) => posts);
+  }
+
+  //get all post from community whose user is member of
+  Future<List<PostModel>> getPostsForUserCommunities(
+    List<CommunityModel> communities,
+  ) async {
+    List<PostModel> allPosts = [];
+
+    for (var community in communities) {
+      final posts = await getPostsByCommunity(community.name);
+      allPosts.addAll(posts);
+    }
+
+    // Sort posts by createdAt in descending order
+    allPosts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    return allPosts;
+  }
+
+  //delete post
+  Future<void> deletePost(String postId) async {
+    await postAPI.deletePost(postId);
+    //invalidate user posts provider to refresh the list
+    final currentUser = ref.read(currentUserProvider).value!;
+    ref.invalidate(userPostsProvider(currentUser.uid));
+    ref.invalidate(allPostsProvider);
+    ref.invalidate(userCommunityPostsProvider);
+  }
 }

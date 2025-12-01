@@ -16,8 +16,9 @@ abstract class IPostAPI {
   FutureEither<List<PostModel>> getUserPosts(String uid);
   FutureEitherVoid deletePost(String postId);
   FutureEither<List<PostModel>> getPostByCommunity(String communityName);
+  FutureEither<PostModel?> getPostById(String postId);
   FutureEither<List<PostModel>> getAllPosts();
-  FutureEitherVoid downvotePost(
+ FutureEitherVoid downvotePost(
     String postId,
     List<String> upvotes,
     List<String> downvotes,
@@ -165,4 +166,26 @@ class PostAPI implements IPostAPI {
       return left(Failure(error.toString(), st.toString()));
     }
   }
+
+  //get post by post id
+  @override
+  FutureEither<PostModel?> getPostById(String postId) async {
+    try {
+      final row = await _db.getRow(
+        databaseId: AppwriteConstants.databaseId,
+        tableId: AppwriteConstants.postTableId,
+        rowId: postId,
+      );
+
+      final data = Map<String, dynamic>.from(row.data);
+      data['\$id'] = row.$id; // Add the row ID to the data
+      final post = PostModel.fromMap(data);
+
+      return right(post);
+    } catch (error, stackTrace) {
+      return left(Failure(error.toString(), stackTrace.toString()));
+    }
+  }
+
+
 }

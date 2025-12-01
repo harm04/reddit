@@ -53,6 +53,17 @@ final userCommunityPostsProvider = FutureProvider<List<PostModel>>((ref) async {
 
   return posts;
 });
+
+//provider to get post by id
+final postByIdProvider = FutureProvider.family<PostModel?, String>((
+  ref,
+  postId,
+) async {
+  final postController = ref.watch(postControllerProvider.notifier);
+  final post = await postController.getPostById(postId);
+  return post;
+});
+
 //provider for post controller
 final postControllerProvider = StateNotifierProvider<PostController, bool>((
   ref,
@@ -72,6 +83,7 @@ final allPostsProvider = FutureProvider<List<PostModel>>((ref) async {
   return result;
 });
 
+
 class PostController extends StateNotifier<bool> {
   final PostAPI postAPI;
   final Ref ref;
@@ -82,6 +94,7 @@ class PostController extends StateNotifier<bool> {
     required this.ref,
     required this.storageAPI,
   }) : super(false);
+
 
   Future<void> createTextPost({
     required String title,
@@ -233,6 +246,15 @@ class PostController extends StateNotifier<bool> {
     }, (posts) => posts);
   }
 
+  //get post by post id
+  Future<PostModel?> getPostById(String postId) async {
+    final result = await postAPI.getPostById(postId);
+    return result.fold((l) {
+      print('Error getting post by id: ${l.message}');
+      return null;
+    }, (post) => post);
+  }
+
   //get  all posts
   Future<List<PostModel>> getAllPosts() async {
     final result = await postAPI.getAllPosts();
@@ -268,4 +290,5 @@ class PostController extends StateNotifier<bool> {
     ref.invalidate(allPostsProvider);
     ref.invalidate(userCommunityPostsProvider);
   }
+
 }

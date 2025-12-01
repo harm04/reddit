@@ -302,17 +302,6 @@ class PostCard extends ConsumerWidget {
 
                               const SizedBox(width: 16),
 
-                              // Comments
-                              SvgPicture.asset(
-                                Constants.commentsPath,
-                                colorFilter: ColorFilter.mode(
-                                  currentTheme.iconTheme.color!,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Text('${postModel.commentCount} Comments'),
-                              SizedBox(width: 16),
                               ref
                                   .watch(
                                     communityByNameProvider(
@@ -321,7 +310,9 @@ class PostCard extends ConsumerWidget {
                                   )
                                   .when(
                                     data: (community) {
-                                      if(community!.mods.contains(currentUser.uid)) {
+                                      if (community!.mods.contains(
+                                        currentUser.uid,
+                                      )) {
                                         return SvgPicture.asset(
                                           Constants.crownPath,
                                           colorFilter: ColorFilter.mode(
@@ -365,15 +356,10 @@ class PostCard extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                          if (postModel.commentCount != 0) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              'View comments',
-                              style: TextStyle(color: Pallete.blueColor),
-                            ),
-                          ],
-                          const SizedBox(height: 10),
+                          SizedBox(height: 5),
+
                           const Divider(),
+                          SizedBox(height: 5),
                         ],
                       ),
                     ),

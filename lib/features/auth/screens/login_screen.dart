@@ -26,19 +26,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ],
         ),
         centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Text(
-              'Skip',
-              style: TextStyle(
-                fontSize: 16,
-                color: Pallete.blueColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+       
       ),
       body: Padding(
         padding: const EdgeInsets.all(18.0),

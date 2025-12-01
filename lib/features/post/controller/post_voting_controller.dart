@@ -33,26 +33,27 @@ class PostVoteState {
 }
 
 // Provider for the voting controller
-final postVotingControllerProvider = StateNotifierProvider<PostVotingController, PostVoteState>((ref) {
-  return PostVotingController(
-    postAPI: ref.watch(postAPIProvider),
-    ref: ref,
-  );
-});
+final postVotingControllerProvider =
+    StateNotifierProvider<PostVotingController, PostVoteState>((ref) {
+      return PostVotingController(
+        postAPI: ref.watch(postAPIProvider),
+        ref: ref,
+      );
+    });
 
 class PostVotingController extends StateNotifier<PostVoteState> {
   final PostAPI postAPI;
   final Ref ref;
   Timer? _syncTimer;
 
-  PostVotingController({
-    required this.postAPI,
-    required this.ref,
-  }) : super(PostVoteState(
+  PostVotingController({required this.postAPI, required this.ref})
+    : super(
+        PostVoteState(
           localVotes: {},
           pendingSyncs: Queue<String>(),
           isSyncing: false,
-        ));
+        ),
+      );
 
   @override
   void dispose() {
@@ -72,7 +73,7 @@ class PostVotingController extends StateNotifier<PostVoteState> {
 
     final currentPost = getPostVoteState(post);
     final userId = currentUser.uid;
-    
+
     List<String> upvotes = List.from(currentPost.upvotes);
     List<String> downvotes = List.from(currentPost.downvotes);
 
@@ -97,7 +98,7 @@ class PostVotingController extends StateNotifier<PostVoteState> {
 
     final currentPost = getPostVoteState(post);
     final userId = currentUser.uid;
-    
+
     List<String> upvotes = List.from(currentPost.upvotes);
     List<String> downvotes = List.from(currentPost.downvotes);
 
@@ -116,7 +117,11 @@ class PostVotingController extends StateNotifier<PostVoteState> {
   }
 
   // FIXED: Update local state INSTANTLY and schedule delayed sync
-  void _updateLocalVoteInstantly(PostModel originalPost, List<String> upvotes, List<String> downvotes) {
+  void _updateLocalVoteInstantly(
+    PostModel originalPost,
+    List<String> upvotes,
+    List<String> downvotes,
+  ) {
     final updatedPost = originalPost.copyWith(
       upvotes: upvotes,
       downvotes: downvotes,
@@ -174,7 +179,9 @@ class PostVotingController extends StateNotifier<PostVoteState> {
 
           result.fold(
             (failure) {
-              print('❌ Failed to sync vote for post $postId: ${failure.message}');
+              print(
+                '❌ Failed to sync vote for post $postId: ${failure.message}',
+              );
               // Re-add to pending if failed
               newPendingSyncs.add(postId);
             },
@@ -189,10 +196,7 @@ class PostVotingController extends StateNotifier<PostVoteState> {
       }
     }
 
-    state = state.copyWith(
-      pendingSyncs: newPendingSyncs,
-      isSyncing: false,
-    );
+    state = state.copyWith(pendingSyncs: newPendingSyncs, isSyncing: false);
 
     // If there are still pending syncs, try again later
     if (newPendingSyncs.isNotEmpty) {
